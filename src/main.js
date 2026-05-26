@@ -1,33 +1,39 @@
-import { getData } from "./js/pixabay-api";
-import { renderGallery } from './js/render-functions.js';
+import { fetchImages } from './js/pixabay-api.js';
+import {
+  renderGallery,
+  clearGallery,
+  showLoader,
+  hideLoader,
+  showNotFoundError,
+  showFetchError,
+} from './js/render-functions.js';
 
-const form = document.querySelector(".form");
+const form = document.querySelector('.form');
 const galleryContainer = document.querySelector('.gallery');
 
-const loader = document.querySelector('.loader');
+form.addEventListener('submit', async event => {
+  event.preventDefault();
+  const query = event.currentTarget.elements['search-text'].value.trim();
 
-form.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    
+  if (query === '') return;
 
-    const query = event.currentTarget.elements['search-text'].value.trim();    
-    
+  clearGallery(galleryContainer);
+  showLoader();
 
-    if (query === "") {
-        return;
+  try {
+    const data = await fetchImages(query);
+
+    if (data.hits.length === 0) {
+      showNotFoundError();
+      return;
     }
 
-    galleryContainer.innerHTML = "";
-    
-    loader.classList.remove('is-hidden');
-
-    try {
-        const data = await getData(query);
-        renderGallery(data.hits, galleryContainer);
-    } catch (error) {
-        console.error("Сталася помилка під час запиту:", error); 
-    } finally {
-        loader.classList.add('is-hidden');
-        form.reset();
-    }
+    renderGallery(data.hits, galleryContainer);
+  } catch (error) {
+    console.error(error);
+    showFetchError(error.message);
+  } finally {
+    hideLoader();
+    form.reset();
+  }
 });

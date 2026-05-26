@@ -1,29 +1,24 @@
-// Описаний у документації
-import iziToast from "izitoast";
-// Додатковий імпорт стилів
-import "izitoast/dist/css/iziToast.min.css";
-// Описаний у документації
-import SimpleLightbox from "simplelightbox";
-// Додатковий імпорт стилів
-import "simplelightbox/dist/simple-lightbox.min.css";
+import iziToast from 'izitoast';
+import 'izitoast/dist/css/iziToast.min.css';
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 let lightbox = null;
 
+const loader = document.querySelector('.loader');
+
 function renderGallery(images, container) {
-  container.innerHTML = "";
-
-  if (images.length === 0) {
-    iziToast.error({
-      title: 'Error',
-      message: 'Sorry, there are no images matching your search query. Please try again!',
-      position: 'topRight',
-    });
-    return; 
-  }
-
   const markup = images
     .map(
-      ({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => `
+      ({
+        webformatURL,
+        largeImageURL,
+        tags,
+        likes,
+        views,
+        comments,
+        downloads,
+      }) => `
         <li class="gallery-item">
           <a class="gallery-link" href="${largeImageURL}">
             <img class="gallery-image" src="${webformatURL}" alt="${tags}" />
@@ -37,7 +32,7 @@ function renderGallery(images, container) {
         </li>
       `
     )
-    .join("");
+    .join('');
 
   container.innerHTML = markup;
 
@@ -51,4 +46,40 @@ function renderGallery(images, container) {
   }
 }
 
-export { renderGallery };
+function clearGallery(container) {
+  container.innerHTML = '';
+}
+
+function showLoader() {
+  if (loader) loader.classList.remove('is-hidden');
+}
+
+function hideLoader() {
+  if (loader) loader.classList.add('is-hidden');
+}
+
+function showNotFoundError() {
+  iziToast.error({
+    title: 'Error',
+    message:
+      'Sorry, there are no images matching your search query. Please try again!',
+    position: 'topRight',
+  });
+}
+
+function showFetchError(message) {
+  iziToast.error({
+    title: 'Error',
+    message: message || 'Something went wrong. Please try again later.',
+    position: 'topRight',
+  });
+}
+
+export {
+  renderGallery,
+  clearGallery,
+  showLoader,
+  hideLoader,
+  showNotFoundError,
+  showFetchError,
+};

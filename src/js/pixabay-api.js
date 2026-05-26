@@ -3,23 +3,18 @@ import axios from 'axios';
 const API_KEY = '55943354-aedacad3df1b2c8419ab26500';
 const BASE_URL = 'https://pixabay.com/api/';
 
-const getData = async userQuery => {
-  try {
-    const response = await axios.get(BASE_URL, {
-      params: {
-        key: API_KEY,
-        q: userQuery,
-        image_type: 'photo',
-        orientation: 'horizontal',
-        safesearch: true,
-      },
-    });
+const fetchImages = async userQuery => {
+  const response = await axios.get(BASE_URL, {
+    params: {
+      key: API_KEY,
+      q: userQuery,
+      image_type: 'photo',
+      orientation: 'horizontal',
+      safesearch: true,
+    },
+  });
 
-    return response.data;
-  } catch (error) {
-    console.error('Помилка під час завантаження зображень:', error);
-    throw error;
-  }
+  return response.data;
 };
 
-export { getData };
+export { fetchImages };
